@@ -1,0 +1,150 @@
+<?
+mysql_connect('localhost' , 'root' , '');
+mysql_select_db('minisistema') or die('Wrong database!') ;
+mysql_query('SET NAMES \'utf8\' COLLATE \'utf8_general_ci\'');
+?>
+<?php
+	session_start();
+	if(!isset($_SESSION["session_username"])) {
+   header("location:windows.php");
+	} else {
+	?>
+	<?php include("includes/header.php"); ?>
+	
+	<div id="welcome">
+    <form class="welc">
+	<h2>Добро пожаловать, <span><?php echo $_SESSION['session_username'];?>! </span></h2>
+ </form>
+	</div>
+<body>
+
+  <div id='page'>
+  
+<div class='welcome'>
+  <div class='wrapper clearfix'>
+    <div class='welcome-message'>
+      <h2>Генератор систем частиц</h2>
+      <p>Благодаря особым возможностям, которое предоставляет генератор систем частиц, 
+         разнообразтье сайт применив простой javascript код. Система частиц интересное
+         декоративное решение для привлечения посетителей и увеличения просмотра сайта.</p>
+    </div>
+    <div class='callout'>
+        <p class="slide"> 
+        	<a href="logout.php" class="btn">Выйти</a>
+        </p>
+    </div> 
+  </div>
+</div>
+
+<div class='wrapper' id='generator-wrapper'>
+  <header class='clearfix'>
+    <h2>Система частиц</h2>
+    <div class='ad-container'>
+    </div>
+  </header>
+
+  <div class='swatch-controls control-box'>
+    <h3>Настройка параметров</h3>
+    <div id='window'>
+  <div class="colorpicker"  style="display: block; position: relative;">
+     
+      <div class="window_small"> 
+        <iframe width="100%" height="100%" src="" id="w_small"></iframe>
+      </div>
+
+    <div class="blockC"  >
+      		
+		<div id="part1_container" class="part_container">
+		
+			<textarea id="comment" cols="30" rows="5" placeholder="Введите текст, увидете как работает система частиц относительно него."></textarea>
+		
+			Фоновая картинка (URL):<br>
+			<input type="text" id="part1_bgimg" class="refresh" value="../clouds.png" /><br>
+			Цвет:<br>
+			<input type="text" id="part1_bgcolor" class="refresh" value="#f55"/><br>
+			Размер:<br>
+			<input type="text" id="part1_size" class="refresh" value="12"/><br>
+			Время исчезания:<br>
+			<input type="text" id="part1_speed" class="refresh" value="800"/><br>
+			Круглый:<br>
+			<input type="checkbox" id="part1_radius" class="refresh" checked /><br>
+		</div>
+		
+    </div> 
+      <? include('particles/particles.html');
+	  /* 
+        $i=0;
+          $q = mysql_query('SELECT * FROM `particles`');
+          while($res = mysql_fetch_assoc($q)) {
+            $i++;
+            print '
+            <div class="field" style=" 
+            top: 0px;
+            left: '.(($i-1)*130).'px;
+            ">
+            <button id="button'.$i.'" style="  
+            width: 113px;
+            height: 30px;
+			">'.$res['title'].'</button> 
+            </div>
+            <script>
+              $(function(){
+                $("#button'.$i.'").click(function(){
+                $.get("'.$res['file'].'",function(data){
+                  $("#wind").val(data);
+                  $("#w_small").attr("src" , "'.$res['file'].'");
+                });
+              });
+              })
+            </script>
+            ';}
+           */
+           ?>
+  </div>
+</div>
+</div>
+</div>
+
+<div class='wrapper' id='code'>
+  <div class='code-container gradient-code'>
+    <h3>Code</h3>
+    <a class='copy-trigger copy-link' href='#copy' title='Copy'>Copy</a>
+
+       <textarea class='generated-code' id='wind'></textarea>
+   </div>
+</div>
+<? include("comment.php");?>
+<script>
+$(function(){
+    $(".btn-slide").click(function(){
+        $("#login").slideToggle("slow");
+        $(this).toggleClass("active");
+    }); 
+    
+$(document).ready(function() {
+setTimeout ("$('#welcome').show('drop');", 1000);
+setTimeout ("$('#welcome').hide('drop');", 3000);
+}); 
+    $('#comment').change(userText);
+    $("#w_small").load(userText);
+	$('.refresh').change(refresh);
+	$('#button1').click();
+
+
+  });
+  //Функция добавляет на страницу с эффектом текст из поля ввода
+  function userText() {
+    var textarea = $('#comment') ;
+    if(textarea.length > 0) {
+      var usertext = $('#w_small').contents().find('#usertext') ;
+      if(usertext.length > 0) {
+        usertext.html(textarea.val());
+      }
+    }
+  }
+</script>
+	<? include("includes/footer.php"); ?>
+		<?
+			}
+		?>
+		
