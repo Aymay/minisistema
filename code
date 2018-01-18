@@ -1,0 +1,58 @@
+$(function(){
+        $('#button').click(function(){
+          $.get('example.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'example.html');
+          });
+        });
+
+
+        $('#button1').click(function(){
+          $.get('sistema.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'sistema.html');
+          });
+        });
+
+         $('#button2').click(function(){
+          $.get('broyn_dv.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'broyn_dv.html');
+          }); 
+        });
+
+ $('#button3').click(function(){
+          $.get('clouds.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'clouds.html');
+          });
+        });
+
+
+        $('#button4').click(function(){
+          $.get('sun.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'sun.html');
+          });
+        });
+
+         $('#button5').click(function(){
+          $.get('sea.html',function(data){
+            $("#wind").val(data);
+            $("#w_small").attr('src' , 'sea.html');
+          }); 
+        });
+
+    $(".btn-slide").click(function(){
+        $("#panel").slideToggle("slow");
+        $(this).toggleClass("active");
+    });
+
+
+    $.get(function(data) {
+    $("#comment").text(data);
+            $("#wind").val(data);
+        });
+});
+
+
