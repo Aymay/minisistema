@@ -1,0 +1,26 @@
+<?
+mysql_connect('localhost' , 'root' , '');
+mysql_select_db('minisistema') or die('Wrong database!') ;
+mysql_query('SET NAMES \'utf8\' COLLATE \'utf8_general_ci\'');
+?>
+<?php
+function show_comments($id_article)
+{ 
+ $res = mysql_query("select * from comments where id_article like '".mysql_real_escape_string($id_article)."' and public = 1 order by -id") ;
+ while($arr = mysql_fetch_array($res, MYSQL_NUM))
+ {
+    echo "
+      <div class=main>
+        <img src=images/comentator.jpg>
+          <div class=block_name>
+            <span class=name>$arr[2]</span>
+              <span class=date>$arr[5]</span>
+          </div>
+      <div class=coment>
+        <div>$arr[4]</div>
+      </div>
+   </div>
+         ";
+}
+}
+?>
