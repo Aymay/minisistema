@@ -1,0 +1,161 @@
+<?
+mysql_connect('localhost' , 'root' , '');
+mysql_select_db('minisistema') or die('Wrong database!') ;
+mysql_query('SET NAMES \'utf8\' COLLATE \'utf8_general_ci\'');
+?>
+<?php
+  session_start();
+  ?>
+<?
+  if(isset($_SESSION["session_username"])){
+  header("Location: intropage.php");
+  }
+
+  if(isset($_POST["login"])){
+
+  if(!empty($_POST['username']) && !empty($_POST['password'])) {
+  $username=$_POST['username'];
+  $password=$_POST['password'];
+  
+ $password = md5($password);
+  $query =mysql_query("SELECT * FROM usertbl WHERE username='".$username."' AND password='".$password."'");
+  $numrows=mysql_num_rows($query);
+  if($numrows!=0)
+ {
+while($row=mysql_fetch_assoc($query))
+ {
+  $dbusername=$row['username'];
+  $dbpassword=$row['password'];
+ }
+  if($username == $dbusername && $password == $dbpassword)
+ {
+  // старое место расположения session_start();
+   $_SESSION['session_username']=$username;  
+   header("Location: intropage.php");
+  }
+  } else { 
+  echo  "Не правильное имя или пароль. Будте внимательны!";
+ }
+  } else {
+    $message = "Все поля обязательно должны быть заполнены!";
+  }
+  }
+  ?>
+
+<?php include("includes/headers.php"); ?>
+
+  <div id='page'>
+  
+<div class='welcome'>
+  <div class='wrapper clearfix'>
+    <div class='welcome-message'>
+      <h2>Генератор систем частиц</h2>
+      <p>Благодаря особым возможностям, которое предоставляет генератор систем частиц, 
+         разнообразтье сайт применив простой javascript код. Система частиц интересное
+         декоративное решение для привлечения посетителей и увеличения просмотра сайта.</p>
+    </div>
+    <div class='callout'>
+      <div id="login">
+  <form action="" id="loginform" method="post" name="loginform">
+          <p><label for="user_login">Имя пoльзователя<br>
+              <input class="input" id="username" name="username"size="20"
+                          type="text" value=""></label></p>
+          <p><label for="user_pass">Пароль<br>
+              <input class="input" id="password" name="password"size="20"
+                           type="password" value=""></label></p> 
+          <p class="submit"><input class="buttonB" name="login"type= "submit" value="Войти"></p>
+          <p class="regtext">Еще не зарегистрированы?<a href= "registrator.php">Регистрация</a>!</p>
+   </form> 
+        </div>
+        <p class="slide">
+        <a href="#" class="btn-slide">Вход</a>
+        </p>
+    </div>
+    
+  </div>
+</div>
+
+<div class='wrapper' id='generator-wrapper'>
+  <header class='clearfix'>
+    <h2>Система частиц</h2>
+    <div class='ad-container'>
+    </div>
+  </header>
+
+  <div class='swatch-controls control-box'>
+    <h3>Настройка параметров</h3>
+    <div id='window'>
+  <div class="colorpicker"  style="display: block; position: relative;">
+     
+      <div class="window_small"> 
+        <iframe width="100%" height="100%" src="" id="w_small"></iframe>
+      </div>
+
+    <div class="blockC">
+		<textarea id="comment" cols="30" rows="5" placeholder="Введите текст, увидете как работает система частиц относительно него."></textarea>
+		<br><br>
+		Войдите, чтобы увидеть дополнительные настройки
+		<input type="hidden" id="part1_bgimg" value="../clouds.png" /><br>
+		<input type="hidden" id="part1_bgcolor" value="#f55"/><br>
+		<input type="hidden" id="part1_size" value="12"/><br>
+		<input type="hidden" id="part1_speed" value="800"/><br>
+		<input type="hidden" id="part1_radius" checked /><br>
+    </div> 
+
+      <? include('particles/particles.html');
+	  /* 
+        $i=0;
+          $q = mysql_query('SELECT * FROM `particles`');
+          while($res = mysql_fetch_assoc($q)) {
+            $i++;
+            print '
+            <div class="field" style="
+            top: 0px;
+            left: '.(($i-1)*40).'px;
+            width: 113px;
+            height: 30px;
+            ">
+              <button id="button'.$i.'">'.$res['title'].'</button> 
+            </div>
+            <script>
+              $(function(){
+                $("#button'.$i.'").click(function(){
+                $.get("'.$res['file'].'",function(data){ 
+                  $("#w_small").attr("src" , "'.$res['file'].'");
+                });
+              });
+              })
+            </script>
+            ';} */
+           ?>
+  </div>
+</div>
+</div>
+</div>
+<script>
+$(function(){
+    $(".btn-slide").click(function(){
+        $("#login").slideToggle("slow");
+        $(this).toggleClass("active");
+    });
+    $('#comment').change(userText);
+    $("#w_small").load(userText);
+});
+function vvod(){
+  document.getElementById ("w_small").innerHTML='comment';
+  }
+  //Функция добавляет на страницу с эффектом текст из поля ввода
+  function userText() {
+    var textarea = $('#comment') ;
+    if(textarea.length > 0) {
+      var usertext = $('#w_small').contents().find('#usertext') ;
+      if(usertext.length > 0) {
+        usertext.html(textarea.val());
+      }
+    }
+  }
+</script>
+
+<? include("comment.php"); 
+   include("includes/footer.php");
+?>
