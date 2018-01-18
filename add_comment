@@ -1,0 +1,37 @@
+<?php   
+mysql_connect('localhost' , 'root' , '');
+mysql_select_db('minisistema') or die('Wrong database!') ;
+mysql_query('SET NAMES \'utf8\' COLLATE \'utf8_general_ci\'');
+while(list ($key, $val) = each ($_POST)){
+	
+} 
+	$date = date('d.m.Yв H:i');                                 
+	$nl = strlen($_POST['name']);
+	$ml = strlen($_POST['mail']);
+	$tl = strlen($_POST['text']);
+	$id_article = $_GET['id_article'];
+	$name = $_POST['name'];
+	$mail = $_POST['mail'];
+	$text = $_POST['text'];
+
+	if($nl<0 or $nl>60 or $ml<0 or $ml>60 or $tl<0 or $tl>700)
+		{$validate = false;}
+	elseif(!@eregi('^[a-z0-9]+(([a-z0-9_.-]+)?)@[a-z0-9+](([a-z0-9_.-]+)?)+\.+[a-z]{2,4}$',$_POST['mail']))
+		{$validate = false;}
+else
+	{$validate = true;} 
+if($validate)
+	{ 
+	$date_add = date('H:i d.m.Y');
+		mysql_connect('localhost' , 'root' , '');
+		mysql_select_db('minisistema') or die('Wrong database!') ;
+		mysql_query('SET NAMES \'utf8\' COLLATE \'utf8_general_ci\'');
+		mysql_query("insert into comments (id_article, name, mail, text, date_add, public)
+		 values ('{$id_article}', '{$name}', '{$mail}', '{$text}', '{$date_add}', '1')") or die ("Error! 9query - add_comment");
+		echo 'ok_refresh';
+	}
+else
+{
+echo '<font color="red">Заполните правильно поля ввода!</font>';
+}
+?>
