@@ -1,0 +1,39 @@
+<script type="text/javascript" src="js_comment.js"> </script>
+
+<div id="coments">
+
+<div class="top">
+<img id="addcomentbutton"  onClick="toggle('addcoment'); location.href='#coments';" src="images/add_coment.png"/>
+</div>
+<div id="addcoment" class="addcoment" style="display:none;">
+<form name="comment" method="post" action="add_comment.php? ID_article=q"> 
+  <input id="name" type="text" name="name" value="Имя (Обязательно)" maxlength="60" onfocus="clearText(this)" onblur="clearText(this)"/><br>
+  <input id="mail" type="text" name="mail" value="Почта (Обязательно)" maxlength="60" onfocus="clearText(this)" onblur="clearText(this)"/><br>
+<textarea rows="10" cols="45"  id="text" name="text" onfocus="clearText(this)" onblur="clearText(this)"></textarea><br>
+
+<img class="button_add" src="images/button_add.png" onclick='
+    ajax({
+      url:"add_comment.php? ID_article=q",
+      statbox:"statusbox",
+      method:"POST",
+      data: {
+      "name":document.getElementById("name").value,
+      "mail":document.getElementById("mail").value,
+      "text":document.getElementById("text").value
+      } ,
+      success:function(data){
+        if(data == "ok_refresh") {
+          console.log(232) 
+          location.reload();
+        } else
+          document.getElementById("statusbox").innerHTML=data;
+      }
+    })
+  '
+/>
+</form>
+</div>
+<?  include("show_comment.php");
+    show_comments('q');
+?>
+</div>
