@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body> 
+  <text id="usertext" style="font: 32pt sans-serif; display: inline;"> </text>  
+    <link href='format_w.css' media='screen' rel='stylesheet' type='text/css'>
+		<canvas width="100%" height="100%"></canvas>
+		<script type="text/javascript">
+ var objectSize = 1; 
+var maxParticles = 200; 
+var emissionRate = 25;  //количество частиц, излучаемых за кадр
+var particleSize = 5; 
+			var canvas = document.querySelector('canvas');
+      var ctx = canvas.getContext('2d');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+function Vector(x, y) {
+  		this.x = x || 0;
+  		this.y = y || 0;
+	}
+	Vector.prototype.add = function(vector) {
+		  this.x += vector.x;
+		  this.y += vector.y;
+		}
+	Vector.prototype.getMagnitude = function () {
+ 		 return Math.sqrt(this.x * this.x + this.y * this.y);
+		};
+	Vector.prototype.getAngle = function () {
+ 		 return Math.atan2(this.y,this.x);
+		}; 
+	Vector.fromAngle = function (angle, magnitude) {
+  		return new Vector(magnitude * Math.cos(angle), magnitude * Math.sin(angle));
+		};
+
+	function Particle(point, velocity, acceleration) {
+		  this.position = point || new Vector(0, 0);
+		  this.velocity = velocity || new Vector(0, 0);
+		  this.acceleration = acceleration || new Vector(0, 0);
+	}
+	Particle.prototype.move = function () {
+  //Добавить ускорение к скорости
+  this.velocity.add(this.acceleration);
+  //Добавить скорость к координатам
+  this.position.add(this.velocity);
+	};
+
+	function Emitter(point, velocity, spread) {
+  this.position = point;
+  this.velocity = velocity;this.position.y
+  this.spread = spread || Math.PI / 12; 
+  this.drawColor = "#999";
+}
+
+	Emitter.prototype.emitParticle = function() {
+
+  var angle = this.velocity.getAngle() + this.spread - (Math.random() * this.spread * 2);
+  //Магнитуда скорости
+  var magnitude = this.velocity.getMagnitude();
+  //координаты излучателя
+  var position = new Vector(this.position.x, this.position.y);
+ // Обновлённая скорость, полученная из вычисленного угла и магнитуды
+  var velocity = Vector.fromAngle(angle, magnitude);
+ //Возвращает Частицу!
+  return new Particle(position,velocity);
+};
+
+	var particles = [];
+
+
+var emitters = [new Emitter(new Vector(300, 250), Vector.fromAngle(0, 3))];
+
+function addNewParticles() {
+  //прекращаем, если достигнут предел
+  if (particles.length > maxParticles) return;
+ //запускаем цикл по каждому излучателю
+  for (var i = 0; i < emitters.length; i++) 
+  { 
+  //согласно emissionRate, генерируем частицы-->
+    for (var j = 0; j < emissionRate; j++)
+     {
+      particles.push(emitters[i].emitParticle());
+   	 }
+	}
+}
+
+function plotParticles(boundsX, boundsY) {
+ //Новый массив для частиц внутри холст
+  var currentParticles = [];
+
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    var pos = particle.position;
+
+    //Если частица за пределами, то пропускаем её и переходим к следующей
+    if (pos.x < 0 || pos.x > boundsX || pos.y < 0 || pos.y > boundsY) continue;
+     // Обновление скорости и ускорения, в соответствии с гравитацией полей
+    particle.submitToFields(fields);
+    // Перемещение
+    	particle.move();
+    //Добавление частицы в массив частиц внутри холста-->
+   		currentParticles.push(particle);
+  }
+  //Замена глобального массива частиц на массив без вылетевших за пределы холста частиц
+  		particles = currentParticles;
+}
+
+function drawParticles() {
+  //Задаём цвет частиц
+  ctx.fillStyle = 'rgb(0,0,123)';
+
+  //Запускаем цикл, который отображает частицы-->
+  for (var i = 0; i < particles.length; i++) {
+    var position = particles[i].position;
+
+   //Рисуем квадрат определенных размеров с заданными координатами
+    ctx.fillRect(position.x, position.y, particleSize, particleSize);
+  }
+}
+function drawCircle(object) {
+  ctx.fillStyle = object.drawColor;
+  ctx.beginPath();
+  ctx.arc(object.position.x, object.position.y, objectSize, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fill();
+}
+
+var particles = [];
+var midX = canvas.width / 2;
+var midY = canvas.height / 2;   
+
+var emitters = [new Emitter(new Vector(10, 50), Vector.fromAngle(1, 2))];
+
+function Field(point, mass) {
+  this.position = point;
+  this.setMass(mass);
+}
+
+Field.prototype.setMass = function(mass) {
+  this.mass = mass || 100;
+  this.drawColor = mass < 0 ? "#f00" : "#0f0";
+}
+var fields = [new Field('usertext', -140)]; 
+Particle.prototype.submitToFields = function (fields) {
+  // стартовое ускорение в кадре
+  var totalAccelerationX = 0;
+  var totalAccelerationY = 0;
+
+  // запускаем цикл по гравитационным полям
+  for (var i = 0; i < fields.length; i++) {
+    var field = fields[i];
+
+    // вычисляем расстояние между частицей и полем
+    var vectorX = field.position.x - this.position.x;
+    var vectorY = field.position.y - this.position.y;
+
+    var force = field.mass / Math.pow(vectorX*vectorX+vectorY*vectorY,1.5);
+
+    // аккумулируем ускорение в кадре произведением силы на расстояние
+    totalAccelerationX += vectorX * force;
+    totalAccelerationY += vectorY * force;
+  }
+
+  // обновляем ускорение частицы
+  this.acceleration = new Vector(totalAccelerationX, totalAccelerationY);
+};
+
+
+	function loop() {
+		clear();
+  		update();
+		draw();
+		queue();
+	}
+
+	function clear() {
+		 ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+	function update() {
+		addNewParticles();
+    	plotParticles(canvas.width, canvas.height);
+	}
+
+	function draw() {
+	drawParticles();
+	fields.forEach(drawCircle);
+	emitters.forEach(drawCircle);
+	}
+	
+	function queue() {
+ 		 window.requestAnimationFrame(loop);
+	}
+	
+	loop();
+
+</script>
+	</body>
+</html>
