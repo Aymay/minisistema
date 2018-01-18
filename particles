@@ -1,0 +1,72 @@
+<div class="button_controls">
+	<div class="field" style="left: 0px;">
+		<button id="button1" style="width: 113px;height: 40px;">След от курсора</button> 
+	</div>
+
+	<div class="field" style="left: 130px;">
+		<button id="button2" style="width: 113px;height: 40px;">Фонтан частиц</button>
+	</div>
+
+	<div class="field" style="left: 260px;">
+		<button id="button3" style="width: 113px;height: 40px;">Броуновское движение</button> 
+	</div>
+
+	<div class="field" style="left: 390px;">
+		<button id="button4" style="width: 113px;height: 40px;">Облачное явление</button> 
+	</div>
+	<script>
+		var add = {};
+		var addtext = '' ;
+		var url = '';
+		function refresh() {
+			
+			add.bgimg = $('#part1_bgimg').val()
+			add.bgcolor = $('#part1_bgcolor').val()
+			add.size = parseInt($('#part1_size').val())
+			add.speed = parseInt($('#part1_speed').val())
+			add.radius = $('#part1_radius').prop('checked') ? 1 : 0
+
+			addtext = '' ;
+			for(key in add) {
+				addtext += key+'='+encodeURIComponent(add[key])+'&';
+			}
+			$.get(url+'?'+addtext,function(data){
+				$("#wind").val(data);
+				$("#w_small").attr("src" , url+'?'+addtext);
+			});
+		}
+		$(function(){
+			$("#button1").click(function(){
+				$('.part_container').slideUp();
+				$('#part1_container').slideDown();
+				url = "particles/example.php" ;
+				add = {} ;
+				refresh() ;
+			});
+			
+			$("#button2").click(function(){
+				$('.part_container').slideUp();
+				$('#part2_container').slideDown();
+				url = "particles/sistema.php" ;
+				add = {} ;
+				refresh() ;
+			});
+			
+			$("#button3").click(function(){
+				$('.part_container').slideUp();
+				$('#part3_container').slideDown();
+				url = "particles/broyn_dv.php" ;
+				add = {} ;
+				refresh() ;
+			});
+			
+			$("#button4").click(function(){
+				$('.part_container').slideUp();
+				$('#part4_container').slideDown();
+				url = "particles/clouds.php" ;
+				add = {} ;
+				refresh() ;
+			});
+		})
+	</script>
+</div>
